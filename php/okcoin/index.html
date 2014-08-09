@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable"/>
+    <meta content="yes" name="apple-touch-fullscreen"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta name="revisit-after"  content="1 days" />
+    <title>okcoin</title>
+    <style>
+            /*
+YUI 3.14.0 (build a01e97d)
+Copyright 2013 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
+html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;*font-size:100%}legend{color:#000}
+    </style>
+    <script src="jquery.js"></script>
+</head>
+<body id="home">
+<style>
+    .list{
+        margin: 0 auto;
+        width: 1000px;
+    }
+    .list .hd{
+        position:fixed;width:980px;padding:5px;background-color: #eee;overflow: hidden;
+        border-radius: 0 0 6px 6px;
+    }
+    .list .bd{
+        padding: 38px 5px 10px;
+        overflow: hidden;
+    }
+    .list .bd dt{
+        line-height: 2em;
+        border-bottom: 1px solid #ddd;
+    }
+    .list .bd .side{
+       line-height: 1.6em;
+       float: left;
+       width: 400px;
+    }
+    .list .bd .j_buy{
+        float: right;
+    }
+    .side p{
+        border-bottom: 1px solid #eee;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .side p span{
+        display: inline-block;
+        margin-left: 5px;
+        min-width: 50px;
+    }
+    .side p.buy{
+        background-color: #00B5AD;
+    }
+    .side p.sell{
+        background-color: #D95C5C;
+    }
+    .date{
+        font-size: 12px;
+        color: #666;
+    }
+    .price{color: #fff;}
+    .buy .amount{
+        background-color: #73E064;
+    }
+    .sell .amount{
+    background-color: #DF9BA4;
+    }
+
+</style>
+<div class="list">
+<div class="hd">
+    <button id="reload">刷新</button>
+    <div style="float: right;">
+        <button class="j_ltc" data-type='ltc_cny'>莱特币</button>
+        <button class="j_btc" disabled data-type='btc_cny'>比特币</button>
+    </div>
+</div>
+    <div class="bd">
+        <dl>
+            <dt>
+                前60笔交易
+            </dt>
+            <dd>
+                <div class="j_buy side"></div>
+                <div class="j_sell side"></div>
+            </dd>
+        </dl>
+    </div>
+</div>
+<script>
+    $(function(){
+        var url='okcoin.php',
+                hd=$(".hd"),
+                bd=$(".bd"),
+                dd=$('dd',bd);
+        var TEMP='<p class="{type}"><span class="date">{date}</span><span class="price">{price}</span><span style="width:{width}px" class="amount">{amount}</span></p>';
+
+        var getParam={};
+
+        var ltcBtn=$('.j_ltc'),
+            btcBtn=$('.j_btc'),
+            reloadBtn=$("#reload");
+        var requestType=localStorage.getItem('requestType')||0;
+        getParam.symbol=requestType==1?'btc_cny':'ltc_cny';
+        ltcBtn.click(function(){
+            getParam.symbol='ltc_cny';
+            request(url,getParam,loadHTML);
+        });
+        btcBtn.click(function(){
+            getParam.symbol='btc_cny';
+            request(url,getParam,loadHTML);
+        });
+
+        reloadBtn.click(function(){
+            request(url,getParam,loadHTML);
+        });
+
+        //init request
+        request(url,getParam,loadHTML);
+        setInterval(function(){
+            request(url,getParam,loadHTML);
+        },2000);
+
+
+        function request(url,getParam,fn){
+            $('button').attr('disabled','disabled');
+            if(getParam.symbol=='btc_cny'){
+                localStorage.setItem('requestType',1);
+            }else{
+                localStorage.setItem('requestType',0);
+            }
+            $.get(url,getParam,fn).always(function(){
+                $('button').removeAttr('disabled','');
+            });
+        }
+
+    /**
+     * load html
+     * @param d
+     */
+    function loadHTML(d){
+        var data=JSON.parse(d),sellArr=[],buyArr=[],totalSellPrice=0;
+        $.each(data,function(){
+            var _this=this;
+            var tempData={
+                'type':_this.type,
+                'date':(function(d){
+                    return [d.getHours()/100, d.getMinutes()/100, d.getSeconds()/100].join(':').replace(/0\./g,'');
+                })(new Date(_this.date)),
+                'price':_this.price,
+                'amount':_this.amount,
+                'width':_this.amount>1?_this.amount:1
+            };
+            switch (this.type){
+                case 'sell':sellArr.unshift(xTemplete(TEMP,tempData));totalSellPrice+=parseFloat(_this.price);break;
+                case 'buy':buyArr.unshift(xTemplete(TEMP,tempData));break;
+            }
+        });
+        $(".j_sell",dd).html(sellArr.join(''));
+        $(".j_buy",dd).html(buyArr.join(''));
+        //最新卖价
+        var avPrive=(totalSellPrice/sellArr.length).toFixed(2);
+        window.document.title=avPrive;
+        console.log('sell:'+avPrive);
+    }
+
+
+    /**
+     * Substitutes keywords in a string using an object/array.
+     * Removes undefined keywords and ignores escaped keywords.
+     * @param {String} str template string
+     * @param {Object} o json data
+     * @member KISSY
+     * @param {RegExp} [regexp] to match a piece of template string
+     */
+   function xTemplete (str, o, regexp) {
+        if (typeof str != 'string' || !o) {
+            return str;
+        }
+
+        return str.replace(regexp || /\\?\{([^{}]+)\}/g, function (match, name) {
+            if (match.charAt(0) === '\\') {
+                return match.slice(1);
+            }
+            return (o[name] === undefined) ? '' : o[name];
+        });
+    }
+    });
+</script>
+</body>
+</html>

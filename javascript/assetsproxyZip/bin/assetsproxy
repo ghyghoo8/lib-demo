@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+var program = require('commander'),
+    colors = require('colors'),
+    path = require('path'),
+    aproxy = require('../');
+
+program
+  .usage('[options] <config file(should be a .js file) ...>')
+  .option('-p, --port [port]', 'Specify the port server will listen on(80 by default).', parseInt)
+  .parse(process.argv);
+
+if(program.args.length){
+    aproxy.run(program.port, path.resolve(program.args[0]));
+}else{
+    console.error('Please specify a config file(.js) first!'.red);
+}
+
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
+
+process.stdin.on('data', function (chunk) {
+    if(chunk == "stop\n") aproxy.stop();
+});
+
+process.stdin.on('end', function () {
+    process.stdout.write('end');
+});
+

@@ -1,0 +1,26 @@
+{
+  "author": "xhowhy <xhowhy@gmail.com> (http://x1989.com)",
+  "name": "assetsproxy",
+  "description": "A assets proxy for web developers",
+  "version": "0.8.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/xhowhy/assetsproxy.git"
+  },
+  "main": "lib/main.js",
+  "bin": "./bin/assetsproxy.js",
+  "dependencies": {
+    "commander": "1.1.x",
+    "http-proxy": "0.8.x",
+    "colors": "0.6.x",
+    "underscore": "1.4.x",
+    "mime": "1.2.*",
+    "async": "~0.2.9",
+    "jschardet": "1.1.x",
+    "iconv-lite": "0.2.x",
+    "less": "~1.6.2"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}

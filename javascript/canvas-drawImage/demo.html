@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<canvas id="test" width="300" height="300"></canvas>
+<script>
+   var cv = document.getElementById("test");
+   var ctx = cv.getContext("2d");
+
+
+    var im = new Image();
+    im.onload = function () {
+
+        ctx.drawImage(im, 0, 0);
+
+        ctx.globalCompositeOperation = 'destination-in';
+        ctx.beginPath();
+        ctx.arc(110, 110, 100, 0, 2*Math.PI, true);
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+
+        console.log(123);
+        setTimeout(function(){
+            var cc=new Image();
+            cc.onload=function(){
+                ctx.drawImage(cc, 20, 0);
+                ctx.globalCompositeOperation = 'destination-in';
+                ctx.beginPath();
+                ctx.arc(110, 110, 100, 0, 2*Math.PI, true);
+                ctx.fill();
+                ctx.globalCompositeOperation = 'source-over';
+                console.log(1222);
+            };
+            cc.src='http://i.mmcdn.cn/simba/img/TB1m10GFVXXXXaqXVXXSutbFXXX.jpg';
+        },2000);
+
+
+    };
+    im.src = "http://img01.daily.taobaocdn.net/tfscom/TB1rdCCXXXXXXXYXpXXSutbFXXX.jpg";
+
+
+</script>
+</body>
+</html>

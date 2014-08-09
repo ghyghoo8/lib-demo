@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>顶部悬浮</title>
+    <meta charset="utf-8">
+    <script src="http://g.tbcdn.cn/kissy/k/1.4.1/seed-min.js"></script>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        .page-mod{
+            width: 100%;
+            padding-top: 100px;
+            height: 3000px;
+        }
+        .page-nav {
+            width: 100%;
+            text-align: center;
+            line-height: 3em;
+            background-color: #e6db74;
+        }
+    </style>
+</head>
+<body>
+<div id="content">
+    <div class="page-mod">
+        <div class="page-hd">
+            <div class="page-nav" id="nav">
+                我是导航
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../src/index.js"></script>
+<script>
+    KISSY.use('floatbar', function (S, floatbar) {
+        var nav=document.getElementById('nav');
+        floatbar({
+            el:nav
+        });
+    });
+</script>
+</body>
+</html>

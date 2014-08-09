@@ -1,0 +1,9 @@
+.DS_Store
+.project
+.settings
+node_modules
+.idea/
+.dump
+setting.js
+setting.json
+.idea
